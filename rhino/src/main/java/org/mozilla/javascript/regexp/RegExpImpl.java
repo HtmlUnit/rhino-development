@@ -33,7 +33,7 @@ public class RegExpImpl implements RegExpProxy {
 
     @Override
     public Object compileRegExp(Context cx, String source, String flags) {
-        return NativeRegExp.compileRE(cx, source, flags, false);
+        return RegExpEngine.compileRE(cx, source, flags, false);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class RegExpImpl implements RegExpProxy {
                     if (useRE) {
                         re = createRegExp(cx, scope, args, 2, true);
                         if (RA_REPLACE_ALL == actionType
-                                && (re.getFlags() & NativeRegExp.JSREG_GLOB) == 0) {
+                                && (re.getFlags() & RegExpEngine.JSREG_GLOB) == 0) {
                             throw ScriptRuntime.typeError(
                                     "replaceAll must be called with a global RegExp");
                         }
@@ -179,7 +179,7 @@ public class RegExpImpl implements RegExpProxy {
         NativeRegExp re;
         Scriptable topScope = ScriptableObject.getTopLevelScope(scope);
         if (args.length == 0 || args[0] == Undefined.instance) {
-            RECompiled compiled = NativeRegExp.compileRE(cx, "", "", false);
+            RECompiled compiled = RegExpEngine.compileRE(cx, "", "", false);
             re =
                     NativeRegExpInstantiator.withLanguageVersionScopeCompiled(
                             cx.getLanguageVersion(), topScope, compiled);
@@ -194,7 +194,7 @@ public class RegExpImpl implements RegExpProxy {
             } else {
                 opt = null;
             }
-            RECompiled compiled = NativeRegExp.compileRE(cx, src, opt, forceFlat);
+            RECompiled compiled = RegExpEngine.compileRE(cx, src, opt, forceFlat);
             re =
                     NativeRegExpInstantiator.withLanguageVersionScopeCompiled(
                             cx.getLanguageVersion(), topScope, compiled);
@@ -212,7 +212,7 @@ public class RegExpImpl implements RegExpProxy {
             GlobData data,
             NativeRegExp re) {
         String str = data.str;
-        data.global = (re.getFlags() & NativeRegExp.JSREG_GLOB) != 0;
+        data.global = (re.getFlags() & RegExpEngine.JSREG_GLOB) != 0;
         int[] indexp = {0};
         Object result = null;
         if (data.mode == RA_SEARCH) {
@@ -450,14 +450,14 @@ public class RegExpImpl implements RegExpProxy {
         if (dp + 1 >= daL) return null;
         /* Interpret all Perl match-induced dollar variables. */
         dc = da.charAt(dp + 1);
-        if (NativeRegExp.isDigit(dc)) {
+        if (RegExpEngine.isDigit(dc)) {
             int cp;
             if (version != Context.VERSION_DEFAULT && version <= Context.VERSION_1_4) {
                 if (dc == '0') return null;
                 /* Check for overflow to avoid gobbling arbitrary decimal digits. */
                 num = 0;
                 cp = dp;
-                while (++cp < daL && NativeRegExp.isDigit(dc = da.charAt(cp))) {
+                while (++cp < daL && RegExpEngine.isDigit(dc = da.charAt(cp))) {
                     tmp = 10 * num + (dc - '0');
                     if (tmp < num) break;
                     num = tmp;
@@ -470,7 +470,7 @@ public class RegExpImpl implements RegExpProxy {
                 cp = dp + 2;
                 if ((dp + 2) < daL) {
                     dc = da.charAt(dp + 2);
-                    if (NativeRegExp.isDigit(dc)) {
+                    if (RegExpEngine.isDigit(dc)) {
                         tmp = 10 * num + (dc - '0');
                         if (tmp <= parenCount) {
                             cp++;
