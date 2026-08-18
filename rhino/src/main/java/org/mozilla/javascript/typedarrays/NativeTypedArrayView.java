@@ -540,7 +540,8 @@ public abstract class NativeTypedArrayView<T> extends NativeArrayBufferView
 
                     if (ScriptRuntime.isArrayObject(arg0)) {
                         // Copy elements of the array and convert them to the correct type
-                        Object[] arrayElements = ScriptRuntime.getArrayElements((Scriptable) arg0);
+                        Object[] arrayElements =
+                                ScriptRuntime.getArrayElements(cx, (Scriptable) arg0);
 
                         NativeArrayBuffer na =
                                 makeArrayBuffer(cx, scope, arrayElements.length, bytesPerElement);
@@ -567,10 +568,10 @@ public abstract class NativeTypedArrayView<T> extends NativeArrayBufferView
                     }
                     arrayElements = elems.toArray();
                 } else {
-                    arrayElements = ScriptRuntime.getArrayElements(obj);
+                    arrayElements = ScriptRuntime.getArrayElements(cx, obj);
                 }
             } else {
-                arrayElements = ScriptRuntime.getArrayElements(obj);
+                arrayElements = ScriptRuntime.getArrayElements(cx, obj);
             }
 
             NativeArrayBuffer na =

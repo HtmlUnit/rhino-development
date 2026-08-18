@@ -5623,8 +5623,7 @@ public class ScriptRuntime {
         return obj instanceof NativeArray || obj instanceof Arguments;
     }
 
-    public static Object[] getArrayElements(Scriptable object) {
-        Context cx = Context.getContext();
+    public static Object[] getArrayElements(Context cx, Scriptable object) {
         long longLen = NativeArray.getLengthProperty(cx, object);
         if (longLen > Integer.MAX_VALUE) {
             // arrays beyond  MAX_INT is not in Java in any case

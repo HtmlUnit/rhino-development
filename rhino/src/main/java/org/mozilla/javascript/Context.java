@@ -1732,7 +1732,7 @@ public class Context implements Closeable {
      * @since 1.4 release 2
      */
     public final Object[] getElements(Scriptable object) {
-        return ScriptRuntime.getArrayElements(object);
+        return ScriptRuntime.getArrayElements(this, object);
     }
 
     /**
