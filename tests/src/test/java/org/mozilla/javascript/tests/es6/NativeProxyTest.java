@@ -103,6 +103,28 @@ public class NativeProxyTest {
         Utils.assertWithAllModes_ES6("true true true 2 1 4", js);
     }
 
+    /**
+     * Test parameter forwarding when the Proxy 'construct' trap forwards its argument list to
+     * Reflect.construct. Verifies that the internal arguments array is correctly passed to the
+     * target constructor.
+     */
+    @Test
+    public void constructWithTrapArgumentsConsumedByReflect() {
+        final String script =
+                "  var res = '';\n"
+                        + "function foo(a, b) {\n"
+                        + "  res += 'foo(' + a + ' ' + b + ')';\n"
+                        + "}\n"
+                        + "var p = new Proxy(foo, {\n"
+                        + "  construct: function(target, args, newTarget) {\n"
+                        + "    return Reflect.construct(target, args, newTarget);\n"
+                        + "  }\n"
+                        + "});\n"
+                        + "new p(1, 'test');\n"
+                        + "res;";
+        Utils.assertWithAllModes_ES6("foo(1 test)", script);
+    }
+
     @Test
     public void apply() {
         String js =
